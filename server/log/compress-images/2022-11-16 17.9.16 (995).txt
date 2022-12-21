@@ -1,7 +1,0 @@
-File from: [./public/images/u3/pexels-maÃ«l-balland-3098796.jpg]
-
-File to: [./public/images/u3/pexels-maÃ«l-balland-3098796.jpg]
-
-Compression algorithm: [-]
-
-Description: File does not exist!

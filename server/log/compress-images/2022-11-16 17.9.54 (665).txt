@@ -1,8 +1,0 @@
-File from: [./public/images/u3/pexels-maÃ«l-balland-3098796.jpg]
-
-File to: [./public/images/u3/pexels-maÃ«l-balland-3098796.jpg]
-
-Compression algorithm: [mozjpeg]
-
-Description: Error: Command failed: C:\Users\Dell\Desktop\Node\PROJECTS\server\node_modules\mozjpeg\vendor\cjpeg.exe -quality 60 -outfile ./public/images/u3/pexels-maÃ«l-balland-3098796.jpg ./public/images/u3/pexels-maÃ«l-balland-3098796.jpg
-Empty input file
