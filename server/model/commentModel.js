@@ -16,6 +16,14 @@ const commentSchema = mongoose.Schema({
     targetedUser : {
         type : String,
         default : null
+    },
+    createdAt: {
+        type: Date,
+        default: new Date().toISOString()
+    },
+    childExist : {
+        type : Boolean,
+        default : false
     }
 })
 

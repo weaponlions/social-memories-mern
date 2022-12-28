@@ -12,7 +12,6 @@ export const googleAuth = (googleData) => async (dispatch) => {
     };
 
     const { data } = await googleLogin(my_data);
-
     if (data) {
       const detail = {
         token: data["token"],
@@ -23,15 +22,21 @@ export const googleAuth = (googleData) => async (dispatch) => {
       };
       localStorage.setItem("keywords", JSON.stringify(detail));
       dispatch({ type: GOOGLEAUTH, payload: detail });
+      return dispatch({type : 'SEND', payload : {message : 'Google Authentication Succesfull', mode : 'success'}});
     }
   } catch (err) {
     console.log(err);
+    return dispatch({type : 'SEND', payload : {message : 'Something went wrong', mode : 'error'}});
   }
 };
 
 export const userRegister = (userData) => async (dispatch) => {
   try {
     const { data } = await signUp(userData);
+    
+    if (data && data['message'] === 'User already Exist.') {
+      return dispatch({type : 'SEND', payload : {message : 'User already Exist, Please Login', mode : 'warning'}});
+    }
     if (data) {
       const detail = {
         token: data["token"],
@@ -40,18 +45,26 @@ export const userRegister = (userData) => async (dispatch) => {
         email: data["user"]["email"],
         id: data["user"]["_id"],
       };
-      console.log(detail);
       localStorage.setItem("keywords", JSON.stringify(detail));
       dispatch({ type: AUTH, payload: data });
+      return dispatch({type : 'SEND', payload : {message : 'Registration Succesfull, Please CREATE First Post', mode : 'success'}});
     }
   } catch (err) {
     console.log(err);
+    return dispatch({type : 'SEND', payload : {message : 'Something went wrong', mode : 'error'}});
   }
 };
 
 export const userLogin = (userData) => async (dispatch) => {
   try {
     const { data } = await signIn(userData);
+    
+    if(data && data['message'] === 'User not Found'){
+      return dispatch({type : 'SEND', payload : {message : 'User not Found, Please Registration First', mode : 'warning'}});
+    }
+    if(data && data['message'] === 'Invalid Password'){
+      return dispatch({type : 'SEND', payload : {message : 'Invalid Password Credential', mode : 'warning'}});
+    }
     if (data) {
       const detail = {
         token: data["token"],
@@ -60,14 +73,30 @@ export const userLogin = (userData) => async (dispatch) => {
         email: data["user"]["email"],
         id: data["user"]["_id"],
       };
-      console.log(detail);
       localStorage.setItem("keywords", JSON.stringify(detail));
       dispatch({ type: AUTH, payload: data });
+      return dispatch({type : 'SEND', payload : {message : 'Login Succesfull, Having Some Fun', mode : 'success'}});
     }
   } catch (err) {
     console.log(err);
+    return dispatch({type : 'SEND', payload : {message : 'Something went wrong', mode : 'error'}});
   }
 };
+
+
+export const tokenExpired = () => async (dispatch) => {
+  const token = JSON.parse(localStorage.getItem('keywords'));
+  if(token && token['token']){
+     const time = decode(token['token']);
+     if(time.exp * 1000 < new Date().getTime()){
+        localStorage.removeItem("keywords");
+        await dispatch({type: EVERLOAD, payload: false});
+        return dispatch({ type : 'SEND', payload : { message : "Session Expire, Please Login Again", mode : 'error' } });
+       }
+      return dispatch({type: EVERLOAD, payload: true});
+    } 
+  return dispatch({type: EVERLOAD, payload: false});
+}
 
 const myState = null;
 
@@ -86,7 +115,7 @@ export const authReducer = (state = myState, { type, payload }) => {
 
 const spyState = null;
 
-export const spyReducer = (state = spyState, { type }) => {
+export const spyReducer = (state = spyState, { type, payload }) => {
   switch (type) {
 
     case FIRSTLOAD:
@@ -96,17 +125,8 @@ export const spyReducer = (state = spyState, { type }) => {
       }
       return true;
 
-    case EVERLOAD:
-        const token = JSON.parse(localStorage.getItem('keywords'))
-        if(token && token['token']){
-            const time = decode(token['token'])
-            if(time.exp * 1000 < new Date().getTime()){
-                localStorage.removeItem("keywords");
-                return false
-            }
-            return true
-          } 
-      return false;
+    case EVERLOAD:  
+      return payload;
 
     case LOGOUT:
       localStorage.removeItem("keywords");

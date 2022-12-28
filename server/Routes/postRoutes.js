@@ -6,6 +6,8 @@ import auth from "../middleware/auth.js";
 const router = express.Router()
 
 // post routes
+
+
 router.get('/?search=:title/:tags/:page', getPageWithSearch)
 router.get('/:id', getSinglePost)
 router.post('/', auth, createPost)
@@ -20,6 +22,7 @@ router.get('/comment/child/:postID/:commentId/:page', getCommentChild)
 router.post('/comment/:postID', postComment)
 router.patch('/comment/:commentID', updateComment)
 router.delete('/comment/:commentID', removeComment)
+
 
 
 export default router

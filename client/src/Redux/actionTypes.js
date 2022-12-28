@@ -4,6 +4,7 @@ export const UPDATE = 'UPDATE'
 export const DELETE = 'DELETE'
 export const LIKE = 'LIKE'
 export const SEARCH = 'SEARCH' 
+export const RESET = 'RESET' 
 
 
 // for update a record / post
@@ -31,6 +32,7 @@ export const RESET_SINGLE = 'RESET_SINGLE'
 export const FETCH_COMMENT = 'FETCH_COMMENT'
 export const CREATE_COMMENT = 'CREATE_COMMENT'
 export const UPDATE_COMMENT = 'UPDATE_COMMENT'
-export const DELETE_COMMENT = 'DELETE_COMMENT'
+
 // child Comment
 export const CHILD_COMMENT = 'CHILD_COMMENT'
+export const NEW_CHILD = 'NEW_CHILD'

@@ -13,6 +13,7 @@ export default makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
     },
+    backgroundColor : '#dde3ff'
   },
   heading: {
     color: theme.palette.primary.main,
@@ -59,4 +60,7 @@ export default makeStyles((theme) => ({
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
   },
+  disabled : {
+    pointerEvents : 'none'
+  }
 }));

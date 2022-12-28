@@ -1,34 +1,42 @@
 import * as api from '../api/index'
-import { CREATE, UPDATE, LIKE, DELETE, SET_ID, ERASE_ID, SEARCH, FETCH_SINGLE, CREATE_COMMENT, FETCH_COMMENT, UPDATE_COMMENT, DELETE_COMMENT, CHILD_COMMENT } from './actionTypes'
+import { CREATE, UPDATE, LIKE, DELETE, SET_ID, ERASE_ID, SEARCH, FETCH_SINGLE, CREATE_COMMENT, FETCH_COMMENT, UPDATE_COMMENT, CHILD_COMMENT, NEW_CHILD } from './actionTypes'
 
 export const getPostsBySearch = (query) => async(dispatch) =>{
     try {
         const { data } = await api.searchPost(query)
-        if(data['message']){ 
+        if(data['message']){
            return dispatch ({ type: SEARCH, payload: [] })
         }
         else return dispatch ({ type: SEARCH, payload: data})
     } catch (err) {
-        console.log(err.message);
+        console.log(err.message); 
+        dispatch({type: 'END'})
+        return dispatch({ type : 'SEND', payload : { message : "Something Went Wrong, Please Try Again Later", mode : 'error' } });
     }
 } 
 
 export const createPost = (post) => async (dispatch)=> {
-    try {  
-        const { data } = await api.createPost(post) 
-        return dispatch({type: CREATE, payload: data})
+    try {
+        dispatch({ type : 'SEND', payload : { message : "Post Uploading, Please Wait", mode : 'info' } });
+        const { data } = await api.createPost(post);
+        dispatch({type: CREATE, payload: data});
+        return dispatch({ type : 'SEND', payload : { message : "Post Successfully Created, Now Enjoy", mode : 'success' } });
     } catch (error) {
         console.log(error.message);
+        return dispatch({ type : 'SEND', payload : { message : "Something Went Wrong, Please Try Again Later", mode : 'error' } });
     }
 }
 
 // update data without Img 
 export const updatePost = (updata, id)=> async (dispatch) => {
     try {
+        dispatch({ type : 'SEND', payload : { message : "Post Updating, Please Wait", mode : 'info' } });
         const { data } = await api.updatePost(updata, id)
-        return dispatch({ type: UPDATE, payload: data})
+        dispatch({ type: UPDATE, payload: data})
+        return dispatch({ type : 'SEND', payload : { message : "Post Successfully Updated, Now Enjoy", mode : 'success' } });
     } catch (error) {
         console.log(error)
+        return dispatch({ type : 'SEND', payload : { message : "Something Went Wrong, Please Try Again Later", mode : 'error' } });
     }
 }
 
@@ -45,10 +53,13 @@ export const updatePostWithImg = (updata, id)=> async (dispatch) => {
 
 export const deletePost = (id)=> async (dispatch) => {
     try {
+        dispatch({ type : 'SEND', payload : { message : "Post Deleting, Please Wait", mode : 'warning' } });
         const { data } = await api.deletePost(id)
-        return dispatch({ type: DELETE, payload: data._id}) 
+        dispatch({ type: DELETE, payload: data._id}) 
+        return dispatch({ type : 'SEND', payload : { message : "Post Deleted, Please Created New Post", mode : 'info' } });
     } catch (error) {
         console.log(error)
+        return dispatch({ type : 'SEND', payload : { message : "Something Went Wrong, Please Try Again Later", mode : 'error' } });
     }
 }
  
@@ -85,8 +96,14 @@ export const getComments = (details) => async (dispatch) => {
 export const createComment = (newData, postID) => async (dispatch) => {
     try {
             const { data } = await api.postComment(newData, postID)
-            console.log(data);
-            return dispatch({type : CREATE_COMMENT, payload : data})
+            if(data['parentID']){
+                dispatch({type : NEW_CHILD, payload : data})
+                return dispatch({type : UPDATE_COMMENT, payload : data})
+            }
+            else {
+             return dispatch({type : CREATE_COMMENT, payload : data}) 
+            }
+                
     } catch (err) {
         console.log(err);
     }
@@ -95,28 +112,17 @@ export const createComment = (newData, postID) => async (dispatch) => {
 export const updateComment = (updData, postID) => async (dispatch) => {
     try {
         const { data } = await api.updateComment(updData, postID)
-        console.log(data);
         return dispatch({type: UPDATE_COMMENT, payload: data})
     } catch (err) {
         console.log(err);
     }
 }
+ 
 
-export const removeComment = (commentID) => async (dispatch) => {
+export const getCommentChild = (newData) => async (dispatch)  => {
     try {
-        const rmComment = await api.removeComment(commentID)
-        console.log(rmComment);
-        return dispatch({type: DELETE_COMMENT, payload: rmComment})
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-export const getCommentChild = (data) => async (dispatch)  => {
-    try {
-        const childComments = await api.getCommentChild(data)
-        console.log(childComments);
-        return dispatch({type: CHILD_COMMENT, payload: childComments})
+        const { data } = await api.getCommentChild(newData)
+        return dispatch({type: CHILD_COMMENT, payload: data})
     } catch (err) {
         console.log(err);
     }

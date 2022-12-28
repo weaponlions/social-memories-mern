@@ -10,15 +10,12 @@ export const signIn = async (req, res) => {
     try {
         const user = await userModel.findOne({email})
         if(user == null)
-            return res.status(404).json({message: 'User not Found'})
-        
-        if(user.password == null) 
-            return res.status(400).json({message: 'User Password not Found'})
+            return res.status(202).json({message: 'User not Found'}) 
 
         const passwordCorrect = await bcrypt.compare(password, user.password)
 
         if(!passwordCorrect)
-            return res.status(400).json({message: 'Invalid credentials...'})
+            return res.status(202).json({message: 'Invalid Password'})
 
         const token = jwt.sign({email: user.email, id: user._id}, process.env.SECRET, {expiresIn: process.env.EXPIRY})
 
@@ -35,7 +32,7 @@ export const signUp = async (req, res) => {
     try {
         const userExist = await userModel.findOne({email})
         if(userExist)
-            return res.status(400).json({message: "User already Exist."})
+            return res.status(202).json({message: "User already Exist."})
 
         const hashPassword = await bcrypt.hash(password, 12)
 
@@ -63,14 +60,12 @@ export const googleLogin = async (req, res) => {
             return res.status(200).json({user, token})
         }
         else{
-
             user = await userModel.create({ email, picture, name: `${firstname} ${lastname}` })
             user.save()
-
+l
             const token = jwt.sign({email: user.email, id: user._id}, process.env.SECRET, {expiresIn: process.env.EXPIRY})
             res.status(200).json({user, token}) 
         }
-         
     } catch (err) { 
         console.log(err);
         res.status(500).json({message: 'Something went wrong'})

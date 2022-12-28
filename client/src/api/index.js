@@ -39,11 +39,11 @@ const url3 = `${url}/comment`  // form comments url
 
 export const getComments = ({page, postID}) => axios.get(`${url3}/${postID ? postID : null}/${page ? page : 1}`)
 
-export const getCommentChild = ({page, commentID, postID}) => axios.get(`${url3}/${postID ? postID : null}/${commentID ? commentID : null}/${page ? page : 1}`)
+export const getCommentChild = ({page, commentID, postID}) => axios.get(`${url3}/child/${postID ? postID : null}/${commentID ? commentID : null}/${page ? page : 1}`)
 
 export const postComment = (data, postID) => axios.post(`${url3}/${postID}`, data)
 
 export const updateComment = (data, commentID) => axios.patch(`${url3}/${commentID}`, data)
 
-export const removeComment = (commentID) => axios.delete(`${url3}/${commentID}`)
+// export const removeComment = (commentID) => axios.delete(`${url3}/${commentID}`)
 

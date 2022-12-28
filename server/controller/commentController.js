@@ -34,13 +34,27 @@ export const likePost = async (req, res) =>{
 export const postComment = async (req, res) => {
     try {
         const { postID } = req.params
-        const data = {
-            ...req.body,
-            postID
-        } 
-        const newComment = commentModel(data)
-        await newComment.save()
-        return res.status(202).json(newComment)
+        
+        if (req.body['parentID']) {
+            const data = {
+                ...req.body,
+                postID,
+                message : req.body['message'].split('-')[1]
+            }
+            await commentModel.findByIdAndUpdate(data['parentID'], {childExist : true}) 
+            const newComment = commentModel(data)
+            await newComment.save()
+            return res.status(202).json(newComment)
+        }
+        else{ 
+            const data = {
+                ...req.body,
+                postID
+            }
+            const newComment = commentModel(data)
+            await newComment.save()
+            return res.status(202).json(newComment)
+        }
     } catch (err) {
         console.log(err);
         return res.status(403).json(err.message)
@@ -78,8 +92,8 @@ export const getComments = async (req, res) => {
         const skip = (page - 1) * Limit
         const totalComment = await commentModel.find({postID : postID, parentID : null }).countDocuments()
         const totalPage = Math.ceil(totalComment/Limit)
-        const comments = await commentModel.find({postID : postID, parentID : null }).skip(skip).limit(Limit)
-        return res.status(200).json({currentPage: page, totalPage: totalPage ,data : comments})
+        const comments = await commentModel.find({postID : postID, parentID : null }).sort({'_id' : -1}).skip(skip).limit(Limit)
+        return res.status(200).json({currentPage: parseInt(page), totalPage: totalPage ,data : comments})
     } catch (err) {
         console.log(err);
         return res.status(403).json(err.message)
@@ -94,8 +108,8 @@ export const getCommentChild = async (req, res) => {
         const skip = (page - 1) * Limit
         const totalComment = await commentModel.find({postID : postID, parentID : commentId }).countDocuments()
         const totalPage = Math.ceil(totalComment/Limit)
-        const comments = await commentModel.find({postID : postID, parentID : commentId }).skip(skip).limit(Limit)
-        return res.status(200).json({currentPage: page, totalPage: totalPage ,data : comments})
+        const comments = await commentModel.find({postID : postID, parentID : commentId }).sort({_id : -1}).skip(skip).limit(Limit)
+        return res.status(200).json({currentPage: parseInt(page), totalPage: totalPage ,data : {[commentId] : comments}, commentID: commentId})
     } catch (err) {
         console.log(err);
         return res.status(403).json(err.message)

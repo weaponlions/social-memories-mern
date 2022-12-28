@@ -1,12 +1,4 @@
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Button,
-  Typography,
-  ButtonBase,
-} from "@material-ui/core";
+import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase, } from "@material-ui/core";
 import React from "react";
 import useStyles from "./styles";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
@@ -17,7 +9,7 @@ import moment from "moment";
 import Image from "../../../images/Text.png";
 import { useDispatch, useSelector } from "react-redux";
 import { setPostID, deletePost, likePost } from "../../../Redux/actions";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 
 
@@ -61,13 +53,19 @@ const Post = ({ post }) => {
  
   const openPost = async (id) => {
     location['key'] = id;
-    navigate(`/posts/${id}`)
+    dispatch({type : 'START'});
+    navigate(`/posts/${id}`);
   };
+
+  const handleUpdate = (postId) => {
+    dispatch(setPostID(postId))
+  }
+  
 
   return (
     <>
       <Card className={classes.card} raised elevation={6}>
-        <ButtonBase className={classes.cardAction} onClick={() => openPost(post._id)} component="span" name="test">
+        <ButtonBase className={classes.cardAction} component="span" name="test">
           <CardMedia
             className={classes.media}
             image={
@@ -76,7 +74,8 @@ const Post = ({ post }) => {
                 : Image
             }
             title={post.title}
-          ></CardMedia>
+            onClick={() => openPost(post._id)}
+          />
           <div className={classes.overlay}>
             <Typography variant="h6">{post.creator}</Typography>
             <Typography variant="body2">
@@ -88,7 +87,7 @@ const Post = ({ post }) => {
               <Button
                 style={{ color: "white" }}
                 size="small"
-                onClick={() => dispatch(setPostID(post._id))}
+                onClick={() => handleUpdate(post._id)}
               >
                 <MoreHorizIcon fontSize="medium" />
               </Button>
@@ -96,14 +95,19 @@ const Post = ({ post }) => {
           </div>
           <div className={classes.details}>
             <Typography variant="body2" color="textSecondary">
-              {( post.tags ? post.tags[0] !== '' ? post.tags.map((tag) => `#${tag} `) : '' : '' )}
+              {( post.tags && post.tags[0] !== '' && post.tags.map((tag) => (
+                 <Link to={`/posts/tags/${tag}`} key={tag} style={{ textDecoration: 'none', color: '#3f51b5' }}>
+                 {` #${tag} `}
+               </Link>)
+              ))}
+             
             </Typography>
           </div>
-          <Typography className={classes.title} variant="h5" gutterBottom>
+          <Typography className={classes.title} variant="h5" onClick={() => openPost(post._id)} gutterBottom>
             {post.title}
           </Typography>
           <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
+            <Typography variant="body2" color="textSecondary" onClick={() => openPost(post._id)} component="p">
               {post.message.length > 25
                 ? `${post.message.slice(0, 120)}...`
                 : post.message}

@@ -1,76 +1,87 @@
-import { Grid, Avatar, Paper, Button, Container, Typography } from "@material-ui/core";
-import Icon from "@material-ui/icons/LockOutlined";
-import React, { useEffect, useState } from "react";
-import Input from "./Input";
+import Input from "./Input"; 
 import useStyles from "./styles";
-import { GoogleLogin } from "@react-oauth/google";
-import { useDispatch, useSelector } from "react-redux";
-import jwt_decode from 'jwt-decode';
-import { googleAuth, userLogin, userRegister } from "../../Redux/auth";
+import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import React, { useEffect, useState } from "react";
+import Icon from "@material-ui/icons/LockOutlined";
 import { FIRSTLOAD } from "../../Redux/actionTypes";
+import { useDispatch, useSelector } from "react-redux";
+import { googleAuth, userLogin, userRegister } from "../../Redux/auth";
+import { Grid, Avatar, Paper, Button, Container, Typography } from "@material-ui/core";
 
 
-const initialState = {firstname : '', lastname: '', email: '', password: '', confirmPassword : ''}
+const initialState = {firstname : '', lastname: '', email: '', password: '', confirmPassword : ''};
 
-const Auth = () => {
+export const Auth = () => {
 
   const classes = useStyles();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [isSignUp, setIsSignUp] = useState(false);
-  const [formdata, setFormdata] = useState(initialState)
+  const [formdata, setFormdata] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);  
 
-  const isLogged = useSelector((state) => state.spyReducer)
+  const isLogged = useSelector((state) => state.spyReducer);
+  const isLoading = useSelector((state) => state.loadingReducer);
 
+  useEffect(() => {
+    if (isLogged) {
+      navigate(-1);
+    }
+  }, [navigate, isLogged]);
+   
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
       if (formdata['password'] === formdata['confirmPassword']) {
-        await dispatch(userRegister(formdata)); 
-        dispatch({type : FIRSTLOAD})
-      } 
+        await dispatch(userRegister(formdata));
+        return dispatch({type : FIRSTLOAD});
+      }else{ 
+        return dispatch({type : 'SEND', payload : {message : "Password and Confirm Password are not Matched", mode : 'warning'}});
+      }
     }else{
-      await dispatch(userLogin(formdata)); 
-      dispatch({type : FIRSTLOAD})
+      await dispatch(userLogin(formdata));
+      return dispatch({type : FIRSTLOAD});
     } 
   };
  
-  useEffect(() => {
-    if (isLogged) {
-      navigate('/')
-    }
-  }, [navigate, isLogged])
-   
-
   const googleSuccess = async(res) => {
-    console.log("Google Login is SuccessFull"); 
     if (res.credential) {
-      const user = jwt_decode(res.credential)
-      await dispatch(googleAuth(user))
-      dispatch({type : FIRSTLOAD})
+      const user = jwt_decode(res.credential);
+      await dispatch(googleAuth(user));
+      dispatch({type : FIRSTLOAD});
     } 
   };
 
   const googleFailure = (res) => {
-    console.log("Google Login is Failed");
     console.log(res);
+    return dispatch({ type : 'SEND', payload : { message : "Something Went Wrong, Please Try Again Later", mode : 'error' } });
   };
 
 
   const handleChange = (e) => { 
-    setFormdata({...formdata, [e.target.name] : e.target.value})
+    setFormdata({...formdata, [e.target.name] : e.target.value});
   };
 
   const switchMode = () => setIsSignUp((prev) => !prev);
 
   const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
 
+  
+ const Sleep = (time) => {
+  setTimeout(()=> {
+    dispatch({type: 'END'});
+  }, time);
+ };
+
+  Sleep(600);
+
   return (
-    <> 
-      <Container component="main" maxWidth="xs">
+    <>  
+      { !isLoading && 
+        (<Container component="main" maxWidth="xs">
         <Paper elevation={3} className={classes.paper}>
           <Avatar className={classes.avatar}>
             <Icon />
@@ -157,11 +168,11 @@ const Auth = () => {
             </Grid>
           </form>
         </Paper>
-      </Container>
+      </Container>) 
+      }
     </>
   );
 };
-
-export default Auth;
+ 
 
 // 1055623080920-lbi811elfirlqor3ksr0cukij3pgu4la.apps.googleusercontent.com

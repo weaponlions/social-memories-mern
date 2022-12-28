@@ -4,15 +4,21 @@ import PaginationItem from '@material-ui/lab/PaginationItem';
 import { Link } from 'react-router-dom';
 import useStyles from './styles';
 import { useDispatch } from 'react-redux';
-import  { getPostsBySearch } from '../Redux/actions'
+import  { getPostsBySearch } from '../Redux/actions' 
 
 export const Pagination = ({ page, totalPage, tags, title}) => {
     const classes = useStyles()
     const dispatch = useDispatch()
     
     const handlePage = (e, selectedPage) => {
-      dispatch(getPostsBySearch({page: selectedPage, tags: (tags[0] === undefined ? '' : tags.join(',')), title: title}))
+      Sleep(500, selectedPage)
     }
+
+    const Sleep = (time, selectedPage) => {
+      setTimeout(()=> {
+        dispatch(getPostsBySearch({page: selectedPage, tags: (tags[0] === undefined ? '' : tags.join(',')), title: title}))
+      }, time)
+     }
       
   return (
     <>

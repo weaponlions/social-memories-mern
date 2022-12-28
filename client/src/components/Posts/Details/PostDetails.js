@@ -1,47 +1,48 @@
 import React, { useEffect } from 'react';
-import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core/';
+import { Paper, Typography, Divider } from '@material-ui/core/';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getPostsBySearch, singlePost, getComments } from '../../../Redux/actions';
+import { useParams, Link } from 'react-router-dom';
+import { singlePost } from '../../../Redux/actions';
 import CommentSection from './CommentSection';
 import useStyles from './styles';
+
 
 export const PostDetails = () => {
     const classes = useStyles();
     const { id } = useParams();
-    const navigate = useNavigate();
-    const dispatch = useDispatch(); 
-
+    const dispatch = useDispatch();
     const post = useSelector((state) => state.singlePost);
+    const isLoading = useSelector((state) => state.loadingReducer)
+
     const fetch = async () => { 
       await dispatch(singlePost(id))
-    }
-    // await dispatch({type : RESET_SINGLE})
-    // await dispatch({type : FETCH_SINGLE, payload : post}) 
+    } 
 
     useEffect(() => {
         if (id) {
           fetch()
         }
+        // eslint-disable-next-line
     }, [id]);
-  
-    // useEffect(() => {
-    //   if (post) {
-    //     // dispatch(getPostsBySearch({ search: 'none', tags: post?.tags.join(',') }));
-    //   }
-    // }, [post]);
-
    
+    
+  const Sleep = (time) => {
+    setTimeout(()=> {
+      dispatch({type: 'END'});
+    }, time);
+  };
+   Sleep(1000)
   return (
     <>
-    <Paper style={{ padding: '20px', borderRadius: '15px' }} elevation={6}>
+    { !isLoading && (
+    <Paper style={{ padding: '20px', borderRadius: '15px', fontFamily: "Roboto" }} elevation={6} >
       <div className={classes.card}>
         <div className={classes.section}>
           <Typography variant="h3" component="h2">{post ? post?.title ? post.title : '' : ''}</Typography>
           <Typography gutterBottom variant="h6" color="textSecondary" component="h2">
             {post ? post?.tags ? post.tags.length > 0 ? post.tags.map((tag) => (
-            <Link to={`/tags/${tag}`} key={tag} style={{ textDecoration: 'none', color: '#3f51b5' }}>
+            <Link to={`/posts/tags/${tag}`} key={tag} style={{ textDecoration: 'none', color: '#3f51b5' }}>
               {` #${tag} `}
             </Link>
           )) : '' : '' : ''}
@@ -57,7 +58,9 @@ export const PostDetails = () => {
           <Divider style={{ margin: '20px 0' }} />
           <Typography variant="body1"><strong>Realtime Chat - coming soon!</strong></Typography>
           <Divider style={{ margin: '20px 0' }} />
-          <CommentSection postID={post ? post._id ? post._id : null : null} />
+
+          <CommentSection postID={id ? id : null} />
+          
           <Divider style={{ margin: '20px 0' }} />
         </div>
         <div className={classes.imageSection}>
@@ -81,7 +84,8 @@ export const PostDetails = () => {
           </div>
         </div>
       )} */}
-    </Paper>
+    </Paper> 
+    )}
     </>
   )
 }
