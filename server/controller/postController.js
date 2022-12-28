@@ -14,7 +14,7 @@ export const createPost = async (req, res, next) => {
         const tempDir = `./public/images/temp`;
 
         if (!existsSync(tempDir)) {
-            await fs.mkdirSync(tempDir, { recursive: true });
+            await fs.mkdir(tempDir, { recursive: true });
         }
  
         const filename = `file_${new Date().getTime()}_${randomUUID()}`;
@@ -25,7 +25,7 @@ export const createPost = async (req, res, next) => {
         const outputPath = `./public/images/${user._id}/`;
 
         if(!existsSync(outputPath)){ 
-            await fs.mkdirSync(outputPath, { recursive: true });
+            await fs.mkdir(outputPath, { recursive: true });
         }
         
         const selectedFile = `/images/${user._id}/${filename}.${ext}`;
@@ -61,7 +61,7 @@ export const updatePost = async (req, res, next) =>{
             const outputPath = `./public/images/${userId}/`;
 
             if(!existsSync(outputPath)){
-                await fs.mkdirSync(outputPath, { recursive: true});
+                await fs.mkdir(outputPath, { recursive: true});
             }
 
             const selectedFile = `/images/${userId}/${filename}.${ext}`;

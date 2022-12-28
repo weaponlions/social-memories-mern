@@ -62,7 +62,7 @@ export const googleLogin = async (req, res) => {
         else{
             user = await userModel.create({ email, picture, name: `${firstname} ${lastname}` })
             user.save()
-l
+
             const token = jwt.sign({email: user.email, id: user._id}, process.env.SECRET, {expiresIn: process.env.EXPIRY})
             res.status(200).json({user, token}) 
         }

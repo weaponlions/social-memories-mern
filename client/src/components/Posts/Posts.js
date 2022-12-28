@@ -30,7 +30,7 @@ const Posts = ({ posts }) => {
     { 
       ((posts && posts[0]) && !posts[0]["data"]) && 
         (
-        <NoDataPaper />
+        <NoDataPaper message={'No Data Found Please Create Your Post'}  />
       )
     }
       {!posts ? (

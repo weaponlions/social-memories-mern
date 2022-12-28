@@ -22,9 +22,9 @@ app.use('/users', userRouter)
 
 
 
-// const CONNECTION_URL = process.env.URL
+const CONNECTION_URL = process.env.URL
 // this for local system
-const CONNECTION_URL2 = process.env.SYS_MONGO
+// const CONNECTION_URL2 = process.env.SYS_MONGO
 const options = {
     dbname : process.env.dbname
 }
@@ -33,7 +33,7 @@ const options = {
 const PORT = process.env.PORT
 
 // mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-mongoose.connect(CONNECTION_URL2, options, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(CONNECTION_URL, options, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(()=>{
     app.listen(PORT, ()=>{
         console.log(`Server Running on port http://localhost:${PORT}`);
