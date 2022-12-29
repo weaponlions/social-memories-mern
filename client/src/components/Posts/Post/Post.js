@@ -70,7 +70,7 @@ const Post = ({ post }) => {
             className={classes.media}
             image={
               post.selectedFile
-                ? `http://localhost:5000${post.selectedFile}`
+                ? `https://social-memories-mern.onrender.com${post.selectedFile}`
                 : Image
             }
             title={post.title}

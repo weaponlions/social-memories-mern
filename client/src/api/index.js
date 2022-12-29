@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:5000'
+axios.defaults.baseURL = 'https://social-memories-mern.onrender.com'
+// axios.defaults.baseURL = 'http://localhost:5000'
 
 axios.interceptors.request.use((req) => {
   if (localStorage.getItem('keywords')) {

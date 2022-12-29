@@ -87,7 +87,10 @@ export const singlePost = (id)=> async (dispatch) => {
 export const getComments = (details) => async (dispatch) => {
     try {
         const { data } = await api.getComments(details)
-        return dispatch({type: FETCH_COMMENT, payload: data})
+        if (details && details['page'] && details['page'] > 1) { 
+            return dispatch({type: 'EXRTA_COMMENT', payload: data})
+        }
+        else return dispatch({type: FETCH_COMMENT, payload: data})
     } catch (err) {
         console.log(err);
     }

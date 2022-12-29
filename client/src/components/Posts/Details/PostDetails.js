@@ -64,7 +64,7 @@ export const PostDetails = () => {
           <Divider style={{ margin: '20px 0' }} />
         </div>
         <div className={classes.imageSection}>
-          <img className={classes.media} alt={post ? post?.title ? post.title : '' : ''} src={post ? post?.selectedFile ? `http://localhost:5000${post.selectedFile}` : '' : ''}  />
+          <img className={classes.media} alt={post ? post?.title ? post.title : '' : ''} src={post ? post?.selectedFile ? `https://social-memories-mern.onrender.com${post.selectedFile}` : '' : ''}  />
         </div>
       </div>
       {/* {!!recommendedPosts.length && (

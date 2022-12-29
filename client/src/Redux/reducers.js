@@ -73,9 +73,9 @@ const commentState = []
 const commentReducer = (state=commentState, {type, payload}) => {
     switch (type) {
         case FETCH_COMMENT:
-            if (state.length === 0) 
-                return [payload]
-                
+            return [payload] 
+
+        case 'EXRTA_COMMENT':
             return [{...payload, data : [...state[0]['data'], ...payload['data']] }]
         
         case CREATE_COMMENT:
